@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+
+# Environment / secrets
+.private_.env
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/
+
+# Pytest
+.pytest_cache/
+
+# Data (contains API keys usage, personal Q&A logs)
+data/
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Poetry
+# Keep pyproject.toml and poetry.lock, ignore the rest

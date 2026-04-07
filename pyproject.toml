@@ -1,0 +1,22 @@
+[project]
+name = "redditscraper"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Sita Sanon",email = "sanon.sita@gmail.com"}
+]
+requires-python = ">=3.11"
+package-mode = false
+dependencies = [
+    "config (==0.5.1)",
+    "pandas (==1.5.3)",
+    "requests (==2.33.1)",
+    "streamlit (==1.56.0)",
+    "python-dotenv (==1.2.2)",
+    "pytest (==7.3.1)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
