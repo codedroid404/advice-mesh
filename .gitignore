@@ -28,7 +28,7 @@ data/
 
 # Claude Code
 .claude/
-.CLAUDE.MD
+
 
 # OS
 .DS_Store
@@ -40,3 +40,4 @@ Thumbs.db
 #md
 REDDIT_SETUP.md
 STREAMLIT_GUIDE.md
+CLAUDE.md
