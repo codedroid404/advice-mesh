@@ -17,7 +17,7 @@ if posts_df.empty:
 else:
     st.dataframe(
         posts_df,
-        use_container_width=True,
+        width="stretch",
         height=600,
         column_config={
             "subreddit": st.column_config.TextColumn("Subreddit", width="small"),

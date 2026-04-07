@@ -130,7 +130,7 @@ def render_overview(summary_df, replies_df, username: str) -> None:
 
     st.dataframe(
         summary_df,
-        use_container_width=True,
+        width="stretch",
         height=400,
         column_config={
             "Subreddit": st.column_config.TextColumn("Subreddit", width="medium"),
@@ -149,7 +149,7 @@ def render_overview(summary_df, replies_df, username: str) -> None:
         data=summary_df.to_csv(index=False),
         file_name=f"{username}_communities.csv",
         mime="text/csv",
-        use_container_width=False,
+        width="content",
     )
 
 
@@ -358,7 +358,7 @@ with st.container(border=True):
         )
 
     with col2:
-        run = st.button("🚀 Scrape", type="primary", use_container_width=True)
+        run = st.button("🚀 Scrape", type="primary", width="stretch")
 
 clean_username = normalize_username(username_input)
 current_username = st.session_state.get("username")
@@ -393,7 +393,7 @@ render_overview(summary_df, replies_df, username)
 # --- Quick Analyze from Home ---
 if not replies_df.empty and "analyzed_df" not in st.session_state:
     st.divider()
-    if st.button("🤖 Analyze All Replies with Claude", type="primary", use_container_width=True, key="home_analyze_btn"):
+    if st.button("🤖 Analyze All Replies with Claude", type="primary", width="stretch", key="home_analyze_btn"):
         from src.analyzer import analyze_replies_df
         from src.shared import save_analysis
 

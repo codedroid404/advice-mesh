@@ -25,7 +25,7 @@ with col_a:
         if not already_df.empty:
             st.dataframe(
                 already_df,
-                use_container_width=True,
+                width="stretch",
                 height=300,
                 column_config={
                     "subreddit": st.column_config.TextColumn("Subreddit"),
@@ -44,7 +44,7 @@ with col_b:
         if not not_yet_df.empty:
             st.dataframe(
                 not_yet_df,
-                use_container_width=True,
+                width="stretch",
                 height=300,
                 column_config={
                     "subreddit": st.column_config.TextColumn("Subreddit"),
@@ -76,7 +76,7 @@ if not not_yet_df.empty:
             with mc1:
                 post_url = st.text_input("Post URL (paste after posting)", key=f"url_{sub_name}", placeholder="https://reddit.com/r/...")
             with mc2:
-                if st.button("✅ Mark as posted", key=f"mark_{sub_name}", use_container_width=True):
+                if st.button("✅ Mark as posted", key=f"mark_{sub_name}", width="stretch"):
                     mark_as_posted(uname, sub_name, url=post_url)
                     st.toast(f"Marked r/{sub_name} as posted!")
                     st.rerun()
@@ -87,7 +87,7 @@ st.caption("Search Reddit for relevant subreddits. Claude evaluates each one.")
 
 with st.form("discovery_form"):
     search_query = st.text_input("Search query", value="C++ interview coding career defense")
-    discover_btn = st.form_submit_button("🔎 Discover", use_container_width=True)
+    discover_btn = st.form_submit_button("🔎 Discover", width="stretch")
 
 if discover_btn and search_query:
     with st.status("Discovering subreddits...", expanded=True) as disc_status:
@@ -113,7 +113,7 @@ if "discovered_df" in st.session_state:
         if not relevant.empty:
             st.dataframe(
                 relevant,
-                use_container_width=True,
+                width="stretch",
                 column_config={
                     "subreddit": st.column_config.TextColumn("Subreddit"),
                     "subscribers": st.column_config.NumberColumn("Subscribers", format="%d"),
@@ -122,7 +122,7 @@ if "discovered_df" in st.session_state:
                     "reason": st.column_config.TextColumn("Reason", width="medium"),
                 },
             )
-            if st.button("✅ Approve all relevant", use_container_width=True):
+            if st.button("✅ Approve all relevant", width="stretch"):
                 save_discovered_subs(relevant["subreddit"].tolist(), not_relevant["subreddit"].tolist())
                 st.toast(f"Saved {len(relevant)} new subreddits!")
                 st.session_state.pop("discovered_df", None)

@@ -42,7 +42,7 @@ tab_replies, tab_analysis, tab_chat = st.tabs([
 with tab_replies:
     st.dataframe(
         replies_df,
-        use_container_width=True,
+        width="stretch",
         height=350,
         column_config={
             "author": st.column_config.TextColumn("Author", width="small"),
@@ -71,7 +71,7 @@ with tab_replies:
         key="reply_select",
     )
 
-    if st.button("Analyze this reply", key="quick_analyze_btn", use_container_width=True):
+    if st.button("Analyze this reply", key="quick_analyze_btn", width="stretch"):
         selected = reply_options[selected_label]
         with st.spinner(f"Analyzing u/{selected['author']}..."):
             analysis = analyze_comment(
@@ -103,7 +103,7 @@ with tab_replies:
 
 # ==================== TAB 2: Batch Analysis ====================
 with tab_analysis:
-    if st.button("🤖 Analyze All Replies", type="primary", key="batch_analyze_btn", use_container_width=True):
+    if st.button("🤖 Analyze All Replies", type="primary", key="batch_analyze_btn", width="stretch"):
         reply_count = len(replies_df)
 
         with st.status(f"Analyzing {reply_count} replies with {config.CLAUDE_MODEL}...", expanded=True) as status:
@@ -227,7 +227,7 @@ with tab_analysis:
             export_data.to_csv(index=False),
             f"{uname}_analysis.csv",
             "text/csv",
-            use_container_width=True,
+            width="stretch",
             key="export_csv_btn",
         )
 

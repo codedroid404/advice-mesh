@@ -17,7 +17,7 @@ if comments_df.empty:
 else:
     st.dataframe(
         comments_df,
-        use_container_width=True,
+        width="stretch",
         height=600,
         column_config={
             "subreddit": st.column_config.TextColumn("Subreddit", width="small"),

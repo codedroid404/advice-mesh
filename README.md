@@ -14,6 +14,17 @@ An AI-powered tool for job seekers who use Reddit to prepare for interviews. Upl
 8. 🔎 **Discover** new relevant subreddits with AI-powered evaluation
 9. ⬇️ **Download** study plans and analysis results as markdown or CSV
 
+## 📸 Demo
+
+### Analysis Insights
+![Analysis Insights](screenshots/analysis_insights.png)
+
+### Full Demo
+
+<!-- To add the video: edit this README on github.com, drag demo.mp4 here, GitHub will generate the embed URL -->
+
+> Upload a job description, scrape Reddit, and get AI-powered analysis of interview advice.
+
 ## 📄 Pages
 
 | Page | Description |

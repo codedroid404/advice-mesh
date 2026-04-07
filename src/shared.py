@@ -48,7 +48,7 @@ def render_sidebar():
 
         with st.container(border=True):
             st.subheader("Data", anchor=False)
-            if st.button("🗑️ Clear cached data", use_container_width=True):
+            if st.button("🗑️ Clear cached data", width="stretch"):
                 # Clear session state
                 for key in list(st.session_state.keys()):
                     del st.session_state[key]
