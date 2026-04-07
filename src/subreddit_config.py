@@ -1,38 +1,49 @@
 """
-Candidate subreddits and per-sub posting configuration.
+Candidate subreddits organized by domain, and per-sub posting configuration.
 """
 
 import json
 import os
 
-CANDIDATE_SUBS = [
-    # Career / interviews
-    "cscareerquestions",
-    "interviews",
-    "leetcode",
-    "codinginterview",
-    "ExperiencedDevs",
-    # Defense / aerospace
-    "defenseindustry",
-    "AerospaceEngineering",
-    "defense",
-    # C++ / embedded / robotics
-    "cpp",
-    "embedded",
-    "robotics",
-    "ROS",
-    # General engineering
-    "AskEngineers",
-    "engineering",
-    # Job hunting
-    "jobs",
-    "careerguidance",
-    "resumes",
-    # Autonomy / AI
-    "artificial",
-    "MachineLearning",
-    "autonomousVehicles",
-]
+SUB_DOMAINS = {
+    "Defense / Aerospace": [
+        "defenseindustry",
+        "AerospaceEngineering",
+        "defense",
+    ],
+    "FAANG / Big Tech": [
+        "cscareerquestions",
+        "leetcode",
+        "codinginterview",
+        "ExperiencedDevs",
+    ],
+    "Embedded / Robotics": [
+        "embedded",
+        "robotics",
+        "ROS",
+        "cpp",
+    ],
+    "AI / ML": [
+        "artificial",
+        "MachineLearning",
+        "autonomousVehicles",
+    ],
+    "General Engineering": [
+        "AskEngineers",
+        "engineering",
+    ],
+    "Job Hunting": [
+        "jobs",
+        "careerguidance",
+        "resumes",
+        "interviews",
+    ],
+}
+
+# Flat list of all candidate subs (all domains combined)
+CANDIDATE_SUBS = []
+for subs in SUB_DOMAINS.values():
+    CANDIDATE_SUBS.extend(subs)
 
 SUB_CONFIG = {
     "interviews": {"tag": "[Advice]", "min_karma": 50},
@@ -56,6 +67,21 @@ SUB_CONFIG = {
     "MachineLearning": {"tag": None, "min_karma": 0},
     "autonomousVehicles": {"tag": None, "min_karma": 0},
 }
+
+
+def get_subs_for_domains(selected_domains):
+    """Return list of subreddits for the selected domains."""
+    subs = []
+    for domain in selected_domains:
+        subs.extend(SUB_DOMAINS.get(domain, []))
+    # Deduplicate while preserving order
+    seen = set()
+    result = []
+    for s in subs:
+        if s.lower() not in seen:
+            seen.add(s.lower())
+            result.append(s)
+    return result
 
 
 def get_all_candidate_subs():

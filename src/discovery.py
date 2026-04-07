@@ -10,6 +10,7 @@ import os
 import time
 import requests
 import pandas as pd
+import streamlit as st
 from src.config import CLAUDE_API_KEY, CLAUDE_BASE_URL, CLAUDE_MODEL
 from src.logger import get_logger
 from src.usage_tracker import track_usage
@@ -27,6 +28,7 @@ CLAUDE_HEADERS = {
 }
 
 
+@st.cache_data(ttl=300, show_spinner=False)
 def search_subreddits(query, limit=25):
     """
     Search Reddit for subreddits matching a query.

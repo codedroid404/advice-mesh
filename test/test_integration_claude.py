@@ -35,6 +35,26 @@ def test_analyze_comment():
 
 
 @pytest.mark.integration
+def test_analyze_comment_with_job_context():
+    """Analyze a comment with job description context."""
+    comment = "Focus on system design and data structures. The live coding was LC medium level."
+
+    result = analyze_comment(
+        comment,
+        job_context="Senior Software Engineer — requires Python, C++, distributed systems experience",
+        interview_stage="Final round live coding session",
+    )
+
+    _skip_if_no_credits(result)
+
+    assert "Authenticity:" in result or "Error:" in result
+    if "Error:" not in result:
+        assert "Usefulness:" in result
+
+    print(f"\n✅ Analysis with context:\n{result}")
+
+
+@pytest.mark.integration
 def test_analyze_replies_df():
     """Analyze a small DataFrame of replies."""
     replies_df = pd.DataFrame({

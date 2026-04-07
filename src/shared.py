@@ -25,7 +25,7 @@ def require_scrape():
 def render_sidebar():
     """Render the shared sidebar across all pages."""
     with st.sidebar:
-        st.header("📡 Reddit Advice Tracker")
+        st.header("🕸️ AdviceMesh")
 
         with st.container(border=True):
             st.subheader("Model", anchor=False)
@@ -38,11 +38,26 @@ def render_sidebar():
             session_usage = get_session_usage()
 
             u1, u2 = st.columns(2)
-            u1.metric("Cost", f"${total_usage['cost']:.4f}")
+            cost = total_usage.get('cost_usd', total_usage.get('cost', 0.0))
+            u1.metric("Cost", f"${cost:.4f}")
             u2.metric("Calls", total_usage['requests'])
             st.caption(f"{total_usage['input_tokens']:,} in / {total_usage['output_tokens']:,} out tokens")
             if session_usage['requests'] > 0:
-                st.caption(f"Session: {session_usage['requests']} calls | ${session_usage['cost']:.4f}")
+                session_cost = session_usage.get('cost_usd', session_usage.get('cost', 0.0))
+                st.caption(f"Session: {session_usage['requests']} calls | ${session_cost:.4f}")
+
+        with st.container(border=True):
+            st.subheader("Data", anchor=False)
+            if st.button("🗑️ Clear cached data", use_container_width=True):
+                # Clear session state
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+                # Clear data files
+                import glob
+                for f in glob.glob(os.path.join(DATA_DIR, "*.json")):
+                    os.remove(f)
+                st.toast("All cached data cleared!")
+                st.rerun()
 
         st.caption("Built with Streamlit + Claude API")
 

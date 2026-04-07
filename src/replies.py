@@ -9,6 +9,7 @@ Usage:
 import time
 import requests
 import pandas as pd
+import streamlit as st
 from src.logger import get_logger
 
 log = get_logger("replies")
@@ -76,6 +77,7 @@ def _fetch_post_comments(post_id, post_url, max_depth=1):
         return []
 
 
+@st.cache_data(ttl=300, show_spinner=False)
 def fetch_replies(posts_df, on_status=None):
     """
     Fetch replies for all posts in the DataFrame.

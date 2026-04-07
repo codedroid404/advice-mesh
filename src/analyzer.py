@@ -19,12 +19,21 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
-ANALYSIS_PROMPT = """Analyze this Reddit comment replying to a post about preparing for a Shield AI C++ code pair interview.
+def _build_prompt(comment_body, job_context="", interview_stage=""):
+    """Build the analysis prompt with optional job context."""
+    context_section = ""
+    if job_context or interview_stage:
+        parts = []
+        if job_context:
+            parts.append(f"Job description:\n{job_context[:2000]}")
+        if interview_stage:
+            parts.append(f"Interview stage: {interview_stage}")
+        context_section = f"\n{chr(10).join(parts)}\n"
 
-Post context: Preparing for Senior Applications Engineer, Autonomy role. Final round C++ code pair on HackerRank.
-
+    return f"""Analyze this Reddit comment replying to an interview preparation post.
+{context_section}
 Comment:
-\"\"\"{comment}\"\"\"
+\"\"\"{comment_body}\"\"\"
 
 Respond in this exact format (do not deviate):
 
@@ -36,20 +45,18 @@ Products: [tools/products mentioned and if organic or forced, or "None"]
 Verdict: [Genuine / Likely promotional / Mixed]"""
 
 
-def analyze_comment(comment_body):
+def analyze_comment(comment_body, job_context="", interview_stage=""):
     """
     Send a single comment to Claude for analysis.
     Returns the analysis text, or an error string on failure.
     """
     url = f"{CLAUDE_BASE_URL}/messages"
+    prompt = _build_prompt(comment_body, job_context, interview_stage)
 
     payload = {
         "model": CLAUDE_MODEL,
         "max_tokens": 500,
-        "messages": [{
-            "role": "user",
-            "content": ANALYSIS_PROMPT.format(comment=comment_body),
-        }],
+        "messages": [{"role": "user", "content": prompt}],
     }
 
     try:
@@ -68,6 +75,70 @@ def analyze_comment(comment_body):
     except Exception as e:
         log.error(f"Analysis failed: {e}")
         return f"Error: {e}"
+
+
+def filter_relevant_subs(subreddits, job_context="", interview_stage=""):
+    """
+    Use Claude to filter a list of subreddits to only those relevant to the job/interview context.
+    Returns a list of relevant subreddit names.
+    Falls back to returning all subs if Claude fails or no context is provided.
+    """
+    if not subreddits:
+        return []
+
+    # If no context, return all — can't filter without knowing what's relevant
+    if not job_context and not interview_stage:
+        log.info("No job context — skipping LLM filter, returning all subs")
+        return list(subreddits)
+
+    context = ""
+    if job_context:
+        context += f"Job description:\n{job_context[:1500]}\n\n"
+    if interview_stage:
+        context += f"Interview stage: {interview_stage}\n\n"
+
+    sub_list = ", ".join(subreddits)
+
+    prompt = f"""{context}Here is a list of subreddits a user has posted or commented in:
+{sub_list}
+
+Return ONLY the subreddit names that are relevant to this job search or interview preparation.
+Include career, technical, interview, job hunting, and industry-specific subreddits.
+Exclude completely unrelated ones (skincare, gaming, hobbies, etc).
+
+Respond with just the subreddit names separated by commas, nothing else."""
+
+    url = f"{CLAUDE_BASE_URL}/messages"
+    payload = {
+        "model": CLAUDE_MODEL,
+        "max_tokens": 300,
+        "messages": [{"role": "user", "content": prompt}],
+    }
+
+    try:
+        log.info(f"Asking Claude to filter {len(subreddits)} subreddits...")
+        resp = requests.post(url, headers=HEADERS, json=payload, timeout=15)
+
+        if resp.status_code != 200:
+            log.warning(f"Claude filter failed: {resp.status_code} — returning all subs")
+            return list(subreddits)
+
+        data = resp.json()
+        track_usage(data, model=CLAUDE_MODEL)
+        response_text = data["content"][0]["text"]
+
+        # Parse comma-separated subreddit names
+        relevant = [s.strip().removeprefix("r/") for s in response_text.split(",") if s.strip()]
+        # Only keep subs that were in the original list (case-insensitive)
+        original_lower = {s.lower(): s for s in subreddits}
+        filtered = [original_lower[r.lower()] for r in relevant if r.lower() in original_lower]
+
+        log.info(f"Claude kept {len(filtered)}/{len(subreddits)} subreddits as relevant")
+        return filtered if filtered else list(subreddits)
+
+    except Exception as e:
+        log.warning(f"Claude filter error: {e} — returning all subs")
+        return list(subreddits)
 
 
 def _parse_line(analysis_text, prefix):
@@ -104,7 +175,7 @@ def parse_key_tips(analysis_text):
     return val
 
 
-def analyze_replies_df(replies_df, on_status=None):
+def analyze_replies_df(replies_df, on_status=None, job_context="", interview_stage=""):
     """
     Analyze all replies in a DataFrame using Claude.
 
@@ -140,7 +211,7 @@ def analyze_replies_df(replies_df, on_status=None):
             continue
 
         log.info(f"Analyzing reply {i+1}/{len(replies_df)} by u/{author}...")
-        analysis = analyze_comment(body)
+        analysis = analyze_comment(body, job_context=job_context, interview_stage=interview_stage)
 
         auth = parse_score(analysis)
         useful = parse_usefulness(analysis)
