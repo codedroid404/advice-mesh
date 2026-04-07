@@ -9,7 +9,7 @@ Usage:
 import time
 import requests
 import pandas as pd
-from logger import get_logger
+from src.logger import get_logger
 
 log = get_logger("replies")
 

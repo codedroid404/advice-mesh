@@ -9,8 +9,8 @@ import time
 import requests
 import pandas as pd
 import streamlit as st
-from logger import get_logger
-from subreddit_config import CANDIDATE_SUBS, SUB_CONFIG, get_all_candidate_subs
+from src.logger import get_logger
+from src.subreddit_config import CANDIDATE_SUBS, SUB_CONFIG, get_all_candidate_subs
 
 log = get_logger("finder")
 

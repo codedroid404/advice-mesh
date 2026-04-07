@@ -6,10 +6,10 @@ import pytest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import pandas as pd
-from scraper import scrape_user
-from finder import fetch_sub_metadata
-from replies import fetch_replies
-from discovery import search_subreddits
+from src.scraper import scrape_user
+from src.finder import fetch_sub_metadata
+from src.replies import fetch_replies
+from src.discovery import search_subreddits
 
 
 @pytest.mark.integration

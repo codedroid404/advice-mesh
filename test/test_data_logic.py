@@ -5,9 +5,9 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import pandas as pd
-from scraper import summarize_subreddits
-from finder import cross_check
-from subreddit_config import CANDIDATE_SUBS, get_all_candidate_subs
+from src.scraper import summarize_subreddits
+from src.finder import cross_check
+from src.subreddit_config import CANDIDATE_SUBS, get_all_candidate_subs
 
 
 # --- summarize_subreddits ---

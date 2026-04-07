@@ -6,8 +6,8 @@ import pytest
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import pandas as pd
-from analyzer import analyze_comment, analyze_replies_df
-from discovery import evaluate_relevance
+from src.analyzer import analyze_comment, analyze_replies_df
+from src.discovery import evaluate_relevance
 
 
 def _skip_if_no_credits(response_text):

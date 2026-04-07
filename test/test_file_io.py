@@ -5,8 +5,8 @@ import os
 import json
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-import posting
-import discovery
+import src.posting as posting
+import src.discovery as discovery
 
 
 # --- posting.py ---

@@ -6,7 +6,7 @@ import json
 from unittest.mock import patch, MagicMock
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from replies import _fetch_post_comments
+from src.replies import _fetch_post_comments
 
 
 def _make_reddit_response(comments):
@@ -30,7 +30,7 @@ def _make_reddit_response(comments):
     ]
 
 
-@patch("replies.requests.get")
+@patch("src.replies.requests.get")
 def test_filters_automod_removal(mock_get):
     """Automod removal messages should be filtered out."""
     response_data = _make_reddit_response([
@@ -53,7 +53,7 @@ def test_filters_automod_removal(mock_get):
     assert "AutoModerator" not in authors
 
 
-@patch("replies.requests.get")
+@patch("src.replies.requests.get")
 def test_filters_post_removed_message(mock_get):
     """Other automod removal variants should also be filtered."""
     response_data = _make_reddit_response([
@@ -73,7 +73,7 @@ def test_filters_post_removed_message(mock_get):
     assert comments[0]["author"] == "real_user"
 
 
-@patch("replies.requests.get")
+@patch("src.replies.requests.get")
 def test_keeps_normal_comments(mock_get):
     """Normal comments should pass through the filter."""
     response_data = _make_reddit_response([

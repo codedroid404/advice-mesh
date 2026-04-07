@@ -1,11 +1,11 @@
 """Where to Post page — post preview, distribution, and subreddit discovery."""
 
 import streamlit as st
-from shared import require_scrape, render_sidebar
-from posting import mark_as_posted
-from post_content import format_for_subreddit, POST_TITLE
-from discovery import discover_and_evaluate, save_discovered_subs
-from subreddit_config import get_all_candidate_subs
+from src.shared import require_scrape, render_sidebar
+from src.posting import mark_as_posted
+from src.post_content import format_for_subreddit, POST_TITLE
+from src.discovery import discover_and_evaluate, save_discovered_subs
+from src.subreddit_config import get_all_candidate_subs
 
 st.set_page_config(page_title="Where to Post", page_icon="🎯", layout="wide")
 render_sidebar()

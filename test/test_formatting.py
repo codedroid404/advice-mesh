@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from post_content import format_for_subreddit, POST_TITLE, POST_BODY
+from src.post_content import format_for_subreddit, POST_TITLE, POST_BODY
 
 
 def test_format_sub_with_tag():

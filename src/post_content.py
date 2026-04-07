@@ -5,7 +5,7 @@ Usage:
     from post_content import POST_TITLE, POST_BODY, format_for_subreddit
 """
 
-from subreddit_config import SUB_CONFIG
+from src.subreddit_config import SUB_CONFIG
 
 POST_TITLE = "[Advice] Shield AI - Final Round C++ Code Pair Interview Tips?"
 

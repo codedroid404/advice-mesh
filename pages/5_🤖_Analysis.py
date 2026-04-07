@@ -1,9 +1,9 @@
 """Analysis page — batch analyze replies and explore results."""
 
 import streamlit as st
-import config
-from shared import require_scrape, render_sidebar, save_analysis
-from analyzer import analyze_replies_df
+from src import config
+from src.shared import require_scrape, render_sidebar, save_analysis
+from src.analyzer import analyze_replies_df
 
 st.set_page_config(page_title="Analysis", page_icon="🤖", layout="wide")
 render_sidebar()

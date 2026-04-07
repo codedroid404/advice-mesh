@@ -8,8 +8,8 @@ import os
 import streamlit as st
 from datetime import datetime, timezone
 
-import config
-from usage_tracker import get_session_usage, get_total_usage
+from src import config
+from src.usage_tracker import get_session_usage, get_total_usage
 
 DATA_DIR = "data"
 ANALYSIS_CACHE = os.path.join(DATA_DIR, "analysis_cache.json")

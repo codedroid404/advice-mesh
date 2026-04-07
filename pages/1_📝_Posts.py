@@ -1,7 +1,7 @@
 """Posts page — view all scraped posts with rich column config."""
 
 import streamlit as st
-from shared import require_scrape, render_sidebar
+from src.shared import require_scrape, render_sidebar
 
 st.set_page_config(page_title="Posts", page_icon="📝", layout="wide")
 render_sidebar()

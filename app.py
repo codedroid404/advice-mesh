@@ -7,13 +7,13 @@ Usage: streamlit run app.py
 
 import streamlit as st
 
-import config
-from logger import get_logger
-from scraper import scrape_user, summarize_subreddits
-from finder import fetch_sub_metadata, cross_check
-from replies import fetch_replies
-from posting import get_posted_subs
-from shared import render_sidebar, load_analysis_cache
+from src import config
+from src.logger import get_logger
+from src.scraper import scrape_user, summarize_subreddits
+from src.finder import fetch_sub_metadata, cross_check
+from src.replies import fetch_replies
+from src.posting import get_posted_subs
+from src.shared import render_sidebar, load_analysis_cache
 
 log = get_logger("app")
 

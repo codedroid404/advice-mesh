@@ -30,7 +30,7 @@ error() { print -P "%F{red}[✗]%f $1"; }
 # --- Configuration ---
 VENV_DIR=".venv"
 ENV_FILE=".private_.env"
-CONFIG_FILE="config.py"
+CONFIG_FILE="src/config.py"
 TMP_REQUIREMENTS="$(mktemp)"
 trap "rm -f '$TMP_REQUIREMENTS'" EXIT INT TERM
 

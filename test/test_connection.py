@@ -9,7 +9,7 @@ import requests
 # Ensure project root is on the path so config.py is found regardless of how pytest is run
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from config import CLAUDE_API_KEY, CLAUDE_BASE_URL, CLAUDE_MODEL
+from src.config import CLAUDE_API_KEY, CLAUDE_BASE_URL, CLAUDE_MODEL
 
 HEADERS = {
     "x-api-key": CLAUDE_API_KEY,

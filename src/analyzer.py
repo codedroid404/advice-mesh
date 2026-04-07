@@ -7,9 +7,9 @@ Usage:
 
 import requests
 import pandas as pd
-from config import CLAUDE_API_KEY, CLAUDE_BASE_URL, CLAUDE_MODEL
-from logger import get_logger
-from usage_tracker import track_usage
+from src.config import CLAUDE_API_KEY, CLAUDE_BASE_URL, CLAUDE_MODEL
+from src.logger import get_logger
+from src.usage_tracker import track_usage
 
 log = get_logger("analyzer")
 

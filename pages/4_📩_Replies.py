@@ -3,10 +3,10 @@
 import streamlit as st
 import requests as _req
 
-import config
-from shared import require_scrape, render_sidebar, save_qa
-from analyzer import analyze_comment, parse_score, parse_usefulness, parse_key_tips
-from usage_tracker import track_usage
+from src import config
+from src.shared import require_scrape, render_sidebar, save_qa
+from src.analyzer import analyze_comment, parse_score, parse_usefulness, parse_key_tips
+from src.usage_tracker import track_usage
 
 st.set_page_config(page_title="Replies", page_icon="📩", layout="wide")
 render_sidebar()

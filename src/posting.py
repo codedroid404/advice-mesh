@@ -8,7 +8,7 @@ Usage:
 import json
 import os
 from datetime import datetime, timezone
-from logger import get_logger
+from src.logger import get_logger
 
 log = get_logger("posting")
 

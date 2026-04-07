@@ -10,7 +10,7 @@ import time
 import requests
 import pandas as pd
 import streamlit as st
-from logger import get_logger
+from src.logger import get_logger
 
 log = get_logger("scraper")
 
