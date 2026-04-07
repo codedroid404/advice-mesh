@@ -29,11 +29,14 @@ data/
 # Claude Code
 .claude/
 .CLAUDE.MD
-REDDIT_SETUP.md
-STREAMLIT_GUIDE.md
+
 # OS
 .DS_Store
 Thumbs.db
 
 # Poetry
 # Keep pyproject.toml and poetry.lock, ignore the rest
+
+#md
+REDDIT_SETUP.md
+STREAMLIT_GUIDE.md
