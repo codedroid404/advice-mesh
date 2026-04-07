@@ -122,6 +122,10 @@ advice-mesh/
 | 🧪 Testing | pytest |
 | ⚙️ Config | python-dotenv + auto-generated config.py |
 
+## 👤 Author
+
+**Sita Sanon** — [LinkedIn](https://www.linkedin.com/in/sita-sanon-a15775269/)
+
 ## 📜 License
 
 MIT
