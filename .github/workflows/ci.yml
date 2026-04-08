@@ -19,11 +19,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install poetry
-          poetry install --no-root
-          pip install pytest-dotenv pymupdf
+          pip install streamlit requests pandas python-dotenv pymupdf pytest pytest-dotenv watchdog
 
-      - name: Create dummy env for tests
+      - name: Create test env
         run: |
           echo "CLAUDE_API_KEY=test-key-for-ci" > .private_.env
           echo "CLAUDE_BASE_URL=https://api.anthropic.com/v1" >> .private_.env
@@ -43,9 +41,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: |
-          pip install poetry pip-audit
-          poetry install --no-root
+        run: pip install pip-audit streamlit requests pandas python-dotenv pymupdf
 
       - name: Dependency vulnerability scan
         continue-on-error: true

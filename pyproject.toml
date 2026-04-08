@@ -1,21 +1,27 @@
 [project]
-name = "redditscraper"
-version = "0.1.0"
-description = ""
+name = "advicemesh"
+version = "1.1.0"
+description = "AI-powered interview advice tracker for Reddit"
 authors = [
-    {name = "Sita Sanon",email = "sanon.sita@gmail.com"}
+    {name = "Sita Sanon", email = "sanon.sita@gmail.com"}
 ]
 requires-python = ">=3.11"
-package-mode = false
-dependencies = [
-    "config (==0.5.1)",
-    "pandas (==1.5.3)",
-    "requests (==2.33.1)",
-    "streamlit (==1.56.0)",
-    "python-dotenv (==1.2.2)",
-    "pytest (==7.3.1)"
-]
 
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11"
+streamlit = ">=1.56.0"
+requests = ">=2.31.0"
+pandas = ">=2.0.0"
+python-dotenv = ">=1.0.0"
+pymupdf = ">=1.24.0"
+watchdog = ">=4.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=7.0.0"
+pytest-dotenv = ">=0.5.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
