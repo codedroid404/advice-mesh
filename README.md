@@ -21,7 +21,10 @@ An AI-powered tool for job seekers who use Reddit to prepare for interviews. Upl
 
 ### Full Demo
 
-<!-- To add the video: edit this README on github.com, drag demo.mp4 here, GitHub will generate the embed URL -->
+https://github.com/user-attachments/assets/5ec7e5e2-0f16-4f16-bafa-5c77f0cddbca
+
+
+
 
 > Upload a job description, scrape Reddit, and get AI-powered analysis of interview advice.
 
