@@ -16,6 +16,9 @@ An AI-powered tool for job seekers who use Reddit to prepare for interviews. Upl
 
 ## 📸 Demo
 
+### Home Page
+![Home Page](screenshots/home.png)
+
 ### Analysis Insights
 ![Analysis Insights](screenshots/analysis_insights.png)
 
