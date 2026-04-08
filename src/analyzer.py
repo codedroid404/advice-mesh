@@ -175,9 +175,14 @@ def parse_key_tips(analysis_text):
     return val
 
 
-def analyze_replies_df(replies_df, on_status=None, job_context="", interview_stage=""):
+def analyze_replies_df(replies_df, on_status=None, on_progress=None, job_context="", interview_stage=""):
     """
     Analyze all replies in a DataFrame using Claude.
+    Saves progress incrementally — partial results survive crashes.
+
+    Args:
+        on_status: callback for status text updates
+        on_progress: callback(partial_df) called after each reply for incremental saves
 
     Returns the DataFrame with analysis, authenticity_score, usefulness_score, and key_tips columns.
     """
@@ -208,21 +213,35 @@ def analyze_replies_df(replies_df, on_status=None, job_context="", interview_sta
             auth_scores.append(0)
             use_scores.append(0)
             tips.append("")
-            continue
+        else:
+            log.info(f"Analyzing reply {i+1}/{len(replies_df)} by u/{author}...")
+            analysis = analyze_comment(body, job_context=job_context, interview_stage=interview_stage)
 
-        log.info(f"Analyzing reply {i+1}/{len(replies_df)} by u/{author}...")
-        analysis = analyze_comment(body, job_context=job_context, interview_stage=interview_stage)
+            # Check for API failure — save what we have so far
+            if analysis.startswith("Error:"):
+                log.warning(f"Analysis failed for u/{author}: {analysis}")
+                analyses.append(analysis)
+                auth_scores.append(0)
+                use_scores.append(0)
+                tips.append("")
+            else:
+                auth = parse_score(analysis)
+                useful = parse_usefulness(analysis)
+                key = parse_key_tips(analysis)
+                log.info(f"  u/{author} — authenticity: {auth}/10, usefulness: {useful}/10")
+                analyses.append(analysis)
+                auth_scores.append(auth)
+                use_scores.append(useful)
+                tips.append(key)
 
-        auth = parse_score(analysis)
-        useful = parse_usefulness(analysis)
-        key = parse_key_tips(analysis)
-
-        log.info(f"  u/{author} — authenticity: {auth}/10, usefulness: {useful}/10")
-
-        analyses.append(analysis)
-        auth_scores.append(auth)
-        use_scores.append(useful)
-        tips.append(key)
+        # Incremental save after each reply
+        if on_progress:
+            partial = replies_df.iloc[:len(analyses)].copy()
+            partial["analysis"] = analyses
+            partial["authenticity_score"] = auth_scores
+            partial["usefulness_score"] = use_scores
+            partial["key_tips"] = tips
+            on_progress(partial)
 
     replies_df = replies_df.copy()
     replies_df["analysis"] = analyses

@@ -74,8 +74,11 @@ def clear_analysis_state() -> None:
 
 
 def save_job_context(job_description: str) -> None:
-    """Persist job description into session state."""
+    """Persist job description into session state. Marks analysis as stale if JD changed."""
     if job_description:
+        old_jd = st.session_state.get("job_description", "")
+        if old_jd and old_jd != job_description and "analyzed_df" in st.session_state:
+            st.session_state["analysis_stale"] = True
         st.session_state["job_description"] = job_description
 
 
@@ -353,12 +356,14 @@ with st.container(border=True):
     with col1:
         username_input = st.text_input(
             "Reddit username",
-            value=st.session_state.get("username", ),
+            value=st.session_state.get("username", ""),
             placeholder="e.g. reddit_user123",
         )
 
     with col2:
         run = st.button("🚀 Scrape", type="primary", width="stretch")
+
+    st.caption("Tip: Scraping may take 1-2 minutes for active users. Refresh the page to cancel.")
 
 clean_username = normalize_username(username_input)
 current_username = st.session_state.get("username")
@@ -411,9 +416,14 @@ if not replies_df.empty and "analyzed_df" not in st.session_state:
                 except (IndexError, ValueError):
                     pass
 
+            def on_progress(partial_df):
+                st.session_state["analyzed_df"] = partial_df
+                save_analysis(username, partial_df.to_dict("records"))
+
             analyzed_df = analyze_replies_df(
                 replies_df,
                 on_status=on_status,
+                on_progress=on_progress,
                 job_context=st.session_state.get("job_description", ""),
                 interview_stage=st.session_state.get("interview_stage", ""),
             )
@@ -426,6 +436,14 @@ if not replies_df.empty and "analyzed_df" not in st.session_state:
 
 elif "analyzed_df" in st.session_state:
     st.divider()
+
+    # Warn if job context changed since last analysis
+    if st.session_state.get("analysis_stale"):
+        st.warning("Job description changed since last analysis. Re-analyze for updated results.", icon="⚠️")
+        if st.button("🔄 Re-analyze with new JD", key="reanalyze_btn"):
+            st.session_state.pop("analyzed_df", None)
+            st.session_state.pop("analysis_stale", None)
+            st.rerun()
     analyzed_df = st.session_state["analyzed_df"]
 
     if "usefulness_score" not in analyzed_df.columns:

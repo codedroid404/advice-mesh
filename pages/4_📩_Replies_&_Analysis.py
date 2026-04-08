@@ -122,9 +122,14 @@ with tab_analysis:
                 except (IndexError, ValueError):
                     pass
 
+            def on_progress(partial_df):
+                st.session_state["analyzed_df"] = partial_df
+                save_analysis(uname, partial_df.to_dict("records"))
+
             analyzed_df = analyze_replies_df(
                 replies_df,
                 on_status=on_analysis_status,
+                on_progress=on_progress,
                 job_context=st.session_state.get("job_description", ""),
                 interview_stage=st.session_state.get("interview_stage", ""),
             )
