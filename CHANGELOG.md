@@ -4,6 +4,30 @@ All notable changes to AdviceMesh are documented here.
 
 ---
 
+## [1.2.0] — 2026-04-08
+
+### 🛡️ Edge Cases & CI/CD
+
+**Bug Fixes:**
+- 🔄 Batch analysis now saves incrementally — partial results survive API failures mid-batch
+- ⚠️ Stale analysis warning when job description changes after analysis, with re-analyze button
+- 🔧 Fixed `use_container_width` deprecation across all files
+- 🔧 Fixed `config` import missing on home page analyze button
+- 🔧 Fixed `cost` vs `cost_usd` key mismatch in usage tracker sidebar
+- 🔧 Fixed analysis cache not restoring to session state on re-scrape
+
+**CI/CD:**
+- 🧪 GitHub Actions workflow: unit tests on push/PR
+- 🔒 Security scanning: pip-audit, hardcoded secret detection, credential checks
+- 📸 Screenshots added to README (home page + analysis insights)
+
+**UX:**
+- 💡 Cancel tip for long scrapes ("Refresh the page to cancel")
+- 🗑️ Clear cached data button in sidebar
+- 📊 Cleaned up `pyproject.toml` — removed conflicting `config==0.5.1` and outdated `pandas==1.5.3`
+
+---
+
 ## [1.1.0] — 2026-04-07
 
 ### 🚀 Major Update
