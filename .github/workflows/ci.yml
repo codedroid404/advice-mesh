@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install --no-root
+
+      - name: Run unit tests
+        run: poetry run pytest test/ -m "not integration" -v
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install poetry pip-audit
+          poetry install --no-root
+
+      - name: Dependency vulnerability scan
+        run: poetry run pip-audit
+
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Scanning for potential secrets..."
+          # Check for API key patterns
+          if grep -rn "sk-ant-\|sk-proj-\|AKIA[0-9A-Z]\{16\}" --include="*.py" .; then
+            echo "ERROR: Potential API keys found in source code!"
+            exit 1
+          fi
+          # Check for .env files committed
+          if git ls-files | grep -E "\.env$|\.private_"; then
+            echo "ERROR: Environment files should not be tracked!"
+            exit 1
+          fi
+          echo "No secrets found."
+
+      - name: Check for debug/test credentials
+        run: |
+          if grep -rn "password\s*=\s*['\"]" --include="*.py" .; then
+            echo "WARNING: Hardcoded password found!"
+            exit 1
+          fi
+          echo "No hardcoded credentials found."
