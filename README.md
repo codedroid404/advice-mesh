@@ -157,7 +157,3 @@ advice-mesh/
 ## 👤 Author
 
 **Sita Sanon** — [LinkedIn](https://www.linkedin.com/in/sita-sanon-a15775269/)
-
-## 📜 License
-
-MIT

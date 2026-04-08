@@ -4,6 +4,50 @@ All notable changes to AdviceMesh are documented here.
 
 ---
 
+## [1.1.0] — 2026-04-07
+
+### 🚀 Major Update
+
+**New Features:**
+- 📄 PDF job description upload (PyMuPDF) or paste text
+- 📝 Interview stage text input for context-aware analysis
+- 🧠 Claude-powered subreddit relevance filter (removes unrelated communities from results)
+- 📊 Inline analysis insights on home page (metrics, top tips, top replies)
+- ⬇️ Download chat responses as markdown files
+- 💬 Multi-turn chat with Claude about all replies (with conversation history)
+- ⚙️ Settings page for API key configuration and connectivity test
+- 🗑️ Clear cached data button in sidebar
+- 🖨️ Print-to-PDF support via Streamlit app menu
+
+**UI Improvements:**
+- 📩 Consolidated Replies + Analysis into single page with 3 tabs (Replies, Batch Analysis, Chat)
+- 📊 Horizontal bar charts for better subreddit name readability
+- 🏆 Top 3 communities cards on home page
+- 🔍 Step-by-step scrape progress with counts and checkmarks
+- 📊 `st.progress` bar inside `st.status` for batch analysis
+- 🗂️ `st.column_config` on all dataframes (LinkColumn, ProgressColumn, NumberColumn)
+- 🔗 `st.link_button` for Reddit links
+- 📋 `st.form` for discovery search and chat input
+- 🔔 `st.toast` for non-blocking notifications
+
+**Architecture:**
+- 🗂️ Organized `src/` package for all backend modules
+- ⚡ `@st.cache_data(ttl=300)` on all API functions (scraper, finder, replies, discovery)
+- 💾 Analysis cache restored from disk on re-scrape (no re-analyzing)
+- 🔧 Config loads from Settings page (JSON) or `.private_.env`
+- 📐 CLAUDE.md + `.claude/rules/streamlit.md` for Claude Code best practices
+- 🎓 Streamlit agent skills installed
+- 🧪 74 tests (64 unit + 10 integration)
+
+**Bug Fixes:**
+- Fixed `use_container_width` deprecation warnings
+- Fixed `st.session_state` widget key conflict with `interview_stage`
+- Fixed analysis cache not restoring `analyzed_df` to session state
+- Fixed `config` import missing on home page analyze button
+- Fixed `cost` vs `cost_usd` key mismatch in usage tracker
+
+---
+
 ## [1.0.0] — 2026-04-07
 
 ### 🎉 Initial Release
@@ -30,12 +74,10 @@ All notable changes to AdviceMesh are documented here.
 - 🗂️ Rich column config with clickable links, progress bars, formatted numbers
 
 **Architecture:**
-- 🗂️ Organized `src/` package for backend modules
 - 🧪 52 tests (43 unit + 9 integration)
 - ⚙️ Auto-generated `config.py` via `setup.sh`
 - 📦 Poetry for dependency management
 - 🔒 Secrets managed via `.private_.env` (gitignored)
-- ⚡ `@st.cache_data` caching on Reddit API calls (5 min TTL)
 
 **Tech Stack:**
 - Streamlit (multipage app)
