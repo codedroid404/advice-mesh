@@ -22,8 +22,21 @@ if not CLAUDE_API_KEY:
 if not CLAUDE_BASE_URL:
     raise ValueError("❌ ERROR: CLAUDE_BASE_URL is missing from .private_.env!")
 
+# Normalize to the /v1 API root so a bare "https://api.anthropic.com" also works
+# (the code builds f"{CLAUDE_BASE_URL}/messages"; without /v1 that 404s).
+CLAUDE_BASE_URL = CLAUDE_BASE_URL.rstrip("/")
+if not CLAUDE_BASE_URL.endswith("/v1"):
+    CLAUDE_BASE_URL = CLAUDE_BASE_URL + "/v1"
+
 if not CLAUDE_MODEL:
     raise ValueError("❌ ERROR: CLAUDE_MODEL is missing from .private_.env!")
+
+# Models selectable in the sidebar dropdown (CLAUDE_MODEL is the default).
+MODEL_OPTIONS = {
+    "claude-opus-4-8": "Claude Opus 4.8 — most capable",
+    "claude-sonnet-4-6": "Claude Sonnet 4.6 — balanced",
+    "claude-haiku-4-5": "Claude Haiku 4.5 — fastest & cheapest",
+}
 
 
 if __name__ == "__main__":

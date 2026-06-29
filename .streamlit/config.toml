@@ -1,0 +1,56 @@
+# AdviceMesh theme — clean, technical, trust-forward. Light + dark.
+# (Native theming only — no custom CSS, per Streamlit best practice.)
+
+[theme]
+font = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+headingFont = "'Inter':https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap"
+codeFont = "'JetBrains Mono':https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+codeFontSize = "13px"
+baseFontSize = 15
+headingFontSizes = ["34px", "26px", "20px", "16px", "14px", "13px"]
+headingFontWeights = [700, 600, 600, 600, 500, 500]
+baseRadius = "10px"
+buttonRadius = "10px"
+showWidgetBorder = true
+showSidebarBorder = true
+linkUnderline = false
+
+[theme.light]
+primaryColor = "#5b6cf0"            # softer indigo — less saturated
+backgroundColor = "#eef0f6"         # gentle off-white (not stark #fff)
+secondaryBackgroundColor = "#e3e6f0"
+textColor = "#24293a"
+linkColor = "#4f46e5"
+borderColor = "#d6dae8"
+codeBackgroundColor = "#e6e9f3"
+greenColor = "#1a7f4b"
+yellowColor = "#b8860b"
+redColor = "#cf2e3f"
+violetColor = "#7c3aed"
+dataframeHeaderBackgroundColor = "#f0f1f8"
+
+[theme.light.sidebar]
+backgroundColor = "#f7f8fc"
+secondaryBackgroundColor = "#eceef7"
+borderColor = "#e4e6f0"
+primaryColor = "#4f46e5"
+
+[theme.dark]
+primaryColor = "#818cf8"            # lighter indigo for contrast on dark
+backgroundColor = "#0f1117"
+secondaryBackgroundColor = "#171a23"
+textColor = "#e6e9f2"
+linkColor = "#a5b4fc"
+borderColor = "#262b38"
+codeBackgroundColor = "#171a23"
+greenColor = "#3fb96f"
+yellowColor = "#e0b341"
+redColor = "#f0616f"
+violetColor = "#a78bfa"
+dataframeHeaderBackgroundColor = "#1c2030"
+
+[theme.dark.sidebar]
+backgroundColor = "#0b0d13"
+secondaryBackgroundColor = "#171a23"
+borderColor = "#262b38"
+primaryColor = "#818cf8"

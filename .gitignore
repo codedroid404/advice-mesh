@@ -17,8 +17,9 @@ build/
 .vscode/
 .idea/
 
-# Streamlit
-.streamlit/
+# Streamlit (keep the committed theme; ignore local secrets/credentials)
+.streamlit/*
+!.streamlit/config.toml
 
 # Pytest
 .pytest_cache/
@@ -41,3 +42,5 @@ Thumbs.db
 REDDIT_SETUP.md
 STREAMLIT_GUIDE.md
 CLAUDE.md
+AUDITABILITY_PLAN.md
+UI_IMPROVEMENTS.md

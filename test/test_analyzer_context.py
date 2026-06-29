@@ -4,7 +4,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from src.analyzer import _build_prompt
+from src.llm import _build_prompt
 
 
 def test_prompt_no_context():

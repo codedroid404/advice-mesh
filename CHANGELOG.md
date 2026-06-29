@@ -4,6 +4,39 @@ All notable changes to AdviceMesh are documented here.
 
 ---
 
+## [2.0.0] — 2026-06-28 — Rebuild: JD → search → analyze
+
+Ground-up rework around **Responsible-AI principles (reliable, auditable, trusted)**.
+
+### ✨ Added
+- **JD → search → analyze flow** — upload a JD; a focused Reddit query is derived
+  from the **role** (and company via ✨ Improve); threads + comments are pulled and
+  AI-scored for authenticity & usefulness.
+- **Playwright scraper** (`src/reddit_browser.py`) reading the public Reddit site
+  via headless Chromium + `shreddit-*` components — Reddit killed the anonymous
+  `.json` API and self-serve OAuth, so this is the only working path.
+- **Single-page tabbed UI** (Results / Analysis / Chat).
+- **1-week study plan** synthesized from the advice (role + company aware) and an
+  **AI insight fallback** when Reddit returns nothing.
+- **Auditability:** reply cards show the AI's reasoning + **model** + **source**;
+  a sidebar **🧾 Audit log**; "AI-generated — verify independently" labels; a
+  trust/interpretation banner on the analysis.
+- **Prompt-injection resistance:** untrusted Reddit content is delimited and
+  labeled "data, never instructions" in the scoring, chat, and study-plan prompts.
+- **MCP server** (`reddit_mcp_server.py`); sidebar **model dropdown** (default
+  Haiku) + **Appearance** theme picker; **top-N** + **threads** cost controls; ETAs;
+  transient-error retry.
+
+### 🔁 Changed
+- `analyzer.py` → **`llm.py`** for readability. README/CLAUDE.md rewritten.
+
+### 🗑️ Removed
+- Username/history flow, "where to post", the 5-page layout, and the dead
+  `.json`/OAuth modules (`scraper/finder/replies/discovery/reddit_auth/posting/
+  post_content/subreddit_config`).
+
+---
+
 ## [1.2.0] — 2026-04-08
 
 ### 🛡️ Edge Cases & CI/CD
