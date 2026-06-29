@@ -31,7 +31,7 @@ score — never exfiltrate data.)
 > headless browser for personal use. Don't run it as a service or store scraped
 > data. Respect [Reddit's terms](https://redditinc.com/policies/data-api-terms).
 
-![AdviceMesh home](screenshots/home.png)
+![AdviceMesh home](screenshots/app-home.png)
 
 ## 🚀 What it does
 
@@ -52,12 +52,13 @@ self‑serve OAuth keys for personal scripts. AdviceMesh therefore reads the
 extracts data from the modern `shreddit-*` web components (`src/reddit_browser.py`).
 No login, no API keys, no proxies. Works from residential IPs.
 
-## 📄 Pages
+## 🧭 The app (single page, three tabs)
 
-| Page | Description |
-|------|-------------|
-| 🏠 Home | Upload JD, search Reddit, threads/communities overview, quick analysis |
-| 📊 Analysis & Chat | Replies table, batch AI analysis with filters, and chat |
+| Tab | What it does |
+|-----|--------------|
+| 📊 Results | Threads found + which communities the advice came from |
+| 🤖 Analysis | Per-reply authenticity/usefulness scores, top tips, 1-week study plan |
+| 💬 Chat | Ask follow-up questions grounded in the advice |
 
 ## ⚙️ Setup
 
@@ -70,15 +71,16 @@ No login, no API keys, no proxies. Works from residential IPs.
 git clone https://github.com/codedroid404/advice-mesh.git
 cd advice-mesh
 python -m venv .venv && source .venv/bin/activate
-pip install streamlit requests pandas python-dotenv pymupdf playwright
+pip install streamlit requests pandas python-dotenv pymupdf playwright "mcp[cli]"
 python -m playwright install chromium      # the headless browser
+# …or simply:  source setup.sh
 ```
 
 ### Configure
 Create `.private_.env`:
 ```
 CLAUDE_API_KEY=your_anthropic_api_key_here
-CLAUDE_MODEL=claude-opus-4-8            # default; switch models in the sidebar
+CLAUDE_MODEL=claude-haiku-4-5           # default; switch models in the sidebar
 CLAUDE_BASE_URL=https://api.anthropic.com/v1
 ```
 
@@ -105,14 +107,14 @@ pytest -m "not integration"     # unit tests
 
 ## 🗂️ Structure
 ```
-app.py                       # Home — JD → search → analyze
-pages/1_📊_Analysis_&_Chat.py # replies, batch analysis, chat
+app.py                       # the whole app — JD → search → analyze (3 tabs)
 reddit_mcp_server.py         # MCP server wrapping the scraper
+assets/logo.svg
 src/
   reddit_browser.py          # Playwright HTML scraper (search/posts/comments)
-  analyzer.py                # AI analysis, JD insights, query generation
+  llm.py                     # AI: scoring, JD insights, query + study-plan gen
   config.py · shared.py · usage_tracker.py · logger.py
-.streamlit/config.toml       # theme
+.streamlit/config.toml       # theme (committed; light/dark + accent picker)
 ```
 
 ## 💰 Cost control

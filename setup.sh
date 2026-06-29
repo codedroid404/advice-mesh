@@ -1,24 +1,21 @@
 #!/bin/zsh
-# Note: do NOT use "set -e" here — this script is sourced,
-# so errexit would kill the parent shell on any error.
-
-# Setup script for Python project
-#
-# Usage: Source this script (don't run it directly)
+# Setup for AdviceMesh.  SOURCE this script (do not execute it):
 #   source setup.sh
-#   or
-#   . setup.sh
+#
+# Creates a .venv, installs Python deps + the Playwright Chromium browser
+# (required by the scraper), activates the venv, and checks your env file.
+#
+# NOTE: src/config.py is hand-maintained — this script does NOT generate it.
 
 # --- Guard: must be sourced, not executed ---
 if [[ "${ZSH_EVAL_CONTEXT}" != *:file ]]; then
-    echo "Error: This script must be sourced, not executed."
-    echo "  Usage: source setup.sh"
+    echo "Error: source this script — 'source setup.sh' (do not run it directly)."
     exit 1
 fi
 
-# --- Guard: must be in project root ---
-if [[ ! -f "pyproject.toml" && ! -d ".git" ]]; then
-    echo "Error: Run this from the project root (no pyproject.toml or .git found)."
+# --- Guard: project root ---
+if [[ ! -f "app.py" && ! -d ".git" ]]; then
+    echo "Error: run this from the project root (app.py / .git not found)."
     return 1
 fi
 
@@ -27,163 +24,54 @@ info()  { print -P "%F{green}[✓]%f $1"; }
 warn()  { print -P "%F{yellow}[!]%f $1"; }
 error() { print -P "%F{red}[✗]%f $1"; }
 
-# --- Configuration ---
 VENV_DIR=".venv"
 ENV_FILE=".private_.env"
-CONFIG_FILE="src/config.py"
-TMP_REQUIREMENTS="$(mktemp)"
-trap "rm -f '$TMP_REQUIREMENTS'" EXIT INT TERM
 
-# --- Preflight checks ---
-local missing=false
-for cmd in poetry python3; do
-    if ! command -v "$cmd" &>/dev/null; then
-        error "$cmd is not found on PATH."
-        missing=true
-    fi
-done
-if [[ "$missing" == true ]]; then
-    error "Install missing dependencies before continuing."
-    return 1
-fi
-
-# --- Minimum version checks ---
-local poetry_version
-poetry_version="$(poetry --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+')"
-if [[ "${poetry_version%%.*}" -lt 1 ]]; then
-    error "Poetry >= 1.2 required (found $poetry_version)."
+# --- Preflight ---
+if ! command -v python3 &>/dev/null; then
+    error "python3 not found on PATH (need Python 3.11+)."
     return 1
 fi
 
 # --- Deactivate any active venv to avoid conflicts ---
 if [[ -n "$VIRTUAL_ENV" ]]; then
     warn "Deactivating current venv: ${VIRTUAL_ENV:t}"
-    deactivate
+    deactivate 2>/dev/null
 fi
 
-# --- Poetry setup ---
-poetry config virtualenvs.in-project true
-
-if [[ ! -f "pyproject.toml" ]]; then
-    info "Initializing Poetry project..."
-    poetry init --no-interaction
+# --- Create + activate venv ---
+if [[ ! -d "$VENV_DIR" ]]; then
+    info "Creating virtual environment ($VENV_DIR)..."
+    python3 -m venv "$VENV_DIR" || { error "venv creation failed."; return 1; }
 fi
+source "$VENV_DIR/bin/activate" || { error "could not activate $VENV_DIR."; return 1; }
+info "Virtual environment activated ($(python3 --version))."
 
-# --- Scan code for imports and sync to Poetry ---
-_needs_dep_scan() {
-    [[ ! -f "poetry.lock" ]] && return 0
-    # Any .py file (excluding .venv) newer than the lockfile?
-    [[ -n "$(find . -path "./$VENV_DIR" -prune -o -name '*.py' -newer poetry.lock -print -quit)" ]]
-}
-
-if _needs_dep_scan; then
-    info "Scanning code for imports..."
-
-    if ! command -v pipreqs &>/dev/null; then
-        pip install -q pipreqs 2>/dev/null
-    fi
-
-    pipreqs . --force --ignore "$VENV_DIR" --savepath "$TMP_REQUIREMENTS" 2>/dev/null
-
-    # Strip local modules that pipreqs mistakenly resolves from PyPI.
-    # Add package names (anchored, one per line) to skip them.
-    local -a LOCAL_MODULES=(config utils helpers)
-    for mod in "${LOCAL_MODULES[@]}"; do
-        sed -i '' "/^${mod}==/d" "$TMP_REQUIREMENTS"
-    done
-
-    local dep
-    while IFS= read -r dep; do
-        [[ -z "$dep" || "$dep" == \#* ]] && continue
-        poetry add "$dep" 2>/dev/null || warn "Skipping $dep (already added or invalid)"
-    done < "$TMP_REQUIREMENTS"
-
-    # Ensure always-needed deps are present
-    local -a REQUIRED_DEPS=(python-dotenv)
-    for dep in "${REQUIRED_DEPS[@]}"; do
-        poetry add "$dep" 2>/dev/null || true
-    done
-
-    poetry lock --no-update
-    info "Dependencies synced to Poetry."
-else
-    info "No code changes detected — skipping dependency scan."
-fi
-
-# --- Install into .venv ---
-poetry install --no-root
-info "Dependencies installed into $VENV_DIR/"
-
-# --- Activate ---
-if [[ ! -f "$VENV_DIR/bin/activate" ]]; then
-    error "Venv activation script not found. Poetry install may have failed."
+# --- Install Python dependencies ---
+info "Installing Python dependencies..."
+python -m pip install -q --upgrade pip
+if ! python -m pip install -q \
+        streamlit requests pandas python-dotenv pymupdf playwright "mcp[cli]"; then
+    error "pip install failed."
     return 1
 fi
-source "$VENV_DIR/bin/activate"
-info "Virtual environment activated. ($(python3 --version))"
+info "Python dependencies installed."
 
-# --- Generate config.py from env file ---
-_generate_config() {
-    local env_file="$1" out_file="$2"
+# --- Install the Playwright browser (the scraper drives headless Chromium) ---
+info "Installing Playwright Chromium (one-time, ~150MB)..."
+python -m playwright install chromium
 
-    [[ ! -f "$env_file" ]] && { warn "$env_file not found. Skipping $out_file generation."; return 0; }
-
-    info "Generating $out_file from $env_file..."
-
-    # Write header
-    cat > "$out_file" <<PYHEADER
-"""Auto-generated config.py by setup.sh — do not edit manually."""
-import os
-from dotenv import load_dotenv
-
-# 1. Load the specific environment file
-load_dotenv("$env_file")
-
-PYHEADER
-
-    # 2. Dynamically read all keys from the env file
-    local -a keys=()
-    local key value
-    while IFS='=' read -r key value || [[ -n "$key" ]]; do
-        key="${key// /}"
-        [[ -z "$key" || "$key" == \#* ]] && continue
-        keys+=("$key")
-        printf '# 2. Fetch the variable\n' >> "$out_file"
-        printf '%s = os.getenv("%s")\n\n' "$key" "$key" >> "$out_file"
-    done < "$env_file"
-
-    # 3. Validate all keys
-    printf '\n# 3. Validate immediately\n' >> "$out_file"
-    for k in "${keys[@]}"; do
-        printf 'if not %s:\n' "$k" >> "$out_file"
-        printf '    raise ValueError("❌ ERROR: %s is missing from %s!")\n\n' "$k" "$env_file" >> "$out_file"
-    done
-
-    # 4. Generate HEADERS if OPENAI_API_KEY exists
-    local has_api_key=false
-    for k in "${keys[@]}"; do
-        [[ "$k" == "OPENAI_API_KEY" ]] && has_api_key=true
-    done
-    if [[ "$has_api_key" == true ]]; then
-        cat >> "$out_file" <<'PYHEADERS'
-HEADERS = {
-    "Authorization": f"Bearer {OPENAI_API_KEY}",
-    "Content-Type": "application/json",
-}
-PYHEADERS
-    fi
-
-    # 5. Main guard
-    cat >> "$out_file" <<PYFOOTER
-
-if __name__ == "__main__":
-    print("✅ Config loaded successfully")
-    print("✅  Model: {CLAUDE_MODEL}")
-PYFOOTER
-
-    info "$out_file generated."
-}
-_generate_config "$ENV_FILE" "$CONFIG_FILE"
+# --- Check secrets (we do NOT generate config.py — it's hand-maintained) ---
+if [[ ! -f "$ENV_FILE" ]]; then
+    warn "$ENV_FILE not found. Create it with at least:"
+    print "    CLAUDE_API_KEY=sk-ant-..."
+    print "    CLAUDE_MODEL=claude-haiku-4-5"
+    print "    CLAUDE_BASE_URL=https://api.anthropic.com/v1"
+elif ! grep -qE "^CLAUDE_API_KEY=.+" "$ENV_FILE"; then
+    warn "CLAUDE_API_KEY is missing/empty in $ENV_FILE — set it before running."
+else
+    info "$ENV_FILE found with CLAUDE_API_KEY."
+fi
 
 echo ""
-info "Setup complete! Run 'python config.py' to validate your env vars."
+info "Setup complete. Run:  streamlit run app.py"
