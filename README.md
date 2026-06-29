@@ -122,3 +122,9 @@ src/
 Each analyzed reply is one AI call. The **"Analyze top N"** control caps how many
 replies are sent (default 25, by Reddit score), and the sidebar shows running
 token cost. Pick a cheaper model (Haiku) in the sidebar for bulk runs.
+
+---
+
+## 👤 Author
+
+**Sita Sanon** — [LinkedIn](https://www.linkedin.com/in/sita-sanon-a15775269) · [GitHub](https://github.com/codedroid404)
